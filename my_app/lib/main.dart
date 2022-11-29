@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/next_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red
       ),
-      home: const MyHomePage(title: 'Title'),
+      home: const MyHomePage(title: 'Test'),
     );
   }
 }
@@ -59,7 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // アクションボタン
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NextPage()),
+          );
+        },
         tooltip: 'Increment',
         backgroundColor: Colors.green,
         child: const Icon(Icons.accessibility_new_sharp),
