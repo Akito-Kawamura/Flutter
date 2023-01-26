@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/account.dart';
-import 'screens/bookmark.dart';
+import 'screens/tables.dart';
 import 'screens/home.dart';
 import 'screens/notification.dart';
 
@@ -52,7 +52,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           onTap: _onItemTapped,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'お気に入り'),
+            BottomNavigationBarItem(icon: Icon(Icons.table_rows_sharp), label: '管理表'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.notifications), label: 'お知らせ'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
