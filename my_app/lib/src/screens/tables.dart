@@ -17,7 +17,7 @@ class BookmarkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('お気に入り'),
+        title: const Text('管理表'),
       ),
       body: Column(
         children: [
