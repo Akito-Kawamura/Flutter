@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/inventory_registration': (context) => InventoryRegistrationPage(),
-        // '/inventory_status': (context) => InventoryStatusPage(),
+        '/inventory_status': (context) => InventoryStatusPage(),
       },
     );
   }

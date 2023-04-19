@@ -27,7 +27,7 @@ class _InventoryStatusPageState extends State<InventoryStatusPage> {
         future: fetchInventoryItems(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data.isNotEmpty) {
+            if (snapshot.data?.isNotEmpty ?? false) {
               return GridView.builder(
                 padding: EdgeInsets.all(8),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -36,25 +36,29 @@ class _InventoryStatusPageState extends State<InventoryStatusPage> {
                   crossAxisSpacing: 8,
                   childAspectRatio: 2 / 1,
                 ),
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data?.length ?? 0,
                 itemBuilder: (context, index) {
-                  InventoryItem item = snapshot.data[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('商品名: ${item.name}'),
-                        Text('購入先: ${item.store}'),
-                        Text('次の購入時期: ${item.timing}'),
-                        Text('価格: ${item.price}'),
-                      ],
-                    ),
-                  );
+                  InventoryItem? item = snapshot.data?[index];
+                  if (item != null) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('商品名: ${item.name}'),
+                          Text('購入先: ${item.store}'),
+                          Text('次の購入時期: ${item.timing}'),
+                          Text('価格: ${item.price}'),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return SizedBox.shrink(); // リストがnullの場合、空のウィジェットを返す
+                  }
                 },
               );
             } else {
