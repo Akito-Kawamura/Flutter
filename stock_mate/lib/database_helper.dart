@@ -14,8 +14,16 @@ class DatabaseHelper {
   // Factory constructor
   factory DatabaseHelper() => _instance;
 
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
+  // プライベートコンストラクタ
+  DatabaseHelper._privateConstructor();
+
   // Internal constructor
   DatabaseHelper._internal();
+
+  // テーブル名を定義
+  final String _tableName = 'inventory';
 
   // Initialize database
   Future<Database> get db async {
@@ -71,5 +79,11 @@ class DatabaseHelper {
     var dbClient = await db;
     var result = await dbClient.query('inventory');
     return result.map((item) => InventoryItem.fromMap(item)).toList();
+  }
+
+  // InventoryItemをデータベースに挿入するメソッド
+  Future<int> insert(InventoryItem item) async {
+    Database db = await instance.database;
+    return await db.insert(_tableName, item.toMap());
   }
 }
