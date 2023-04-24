@@ -1,35 +1,42 @@
+import 'dart:convert';
+
 class InventoryItem {
   int? id;
-  String? name;
+  String name;
   String? store;
-  int? timing;
-  double? price;
+  String timing;
+  int? price;
   String? url;
 
-  InventoryItem({this.id, this.name, this.store, this.timing, this.price, this.url});
+  InventoryItem({
+    this.id,
+    required this.name,
+    this.store,
+    required this.timing,
+    this.price,
+    this.url,
+  });
 
-  // Convert an InventoryItem object to a Map object
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'name': name,
-      'store': store,
-      'timing': timing,
-      'price': price,
-      'url': url,
-    };
-    if (id != null) {
-      map['id'] = id;
-    }
-    return map;
-  }
+  factory InventoryItem.fromMap(Map<String, dynamic> json) => InventoryItem(
+        id: json["id"],
+        name: json["name"],
+        store: json["store"],
+        timing: json["timing"],
+        price: json["price"],
+        url: json["url"],
+      );
 
-  // Convert a Map object to an InventoryItem object
-  InventoryItem.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    name = map['name'];
-    store = map['store'];
-    timing = map['timing'];
-    price = map['price'];
-    url = map['url'];
-  }
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "name": name,
+        "store": store,
+        "timing": timing,
+        "price": price,
+        "url": url,
+      };
+
+  factory InventoryItem.fromJson(String source) =>
+      InventoryItem.fromMap(json.decode(source));
+
+  String toJson() => json.encode(toMap());
 }
