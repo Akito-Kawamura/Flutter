@@ -1,89 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:stock_mate/database_helper.dart';
 import 'package:stock_mate/inventory_item.dart';
 
+
 class InventoryRegistrationPage extends StatefulWidget {
+  const InventoryRegistrationPage({Key? key}) : super(key: key);
+
   @override
   _InventoryRegistrationPageState createState() => _InventoryRegistrationPageState();
 }
 
 class _InventoryRegistrationPageState extends State<InventoryRegistrationPage> {
-  // 入力フィールドのコントローラー
-  TextEditingController nameController = TextEditingController();
-  TextEditingController storeController = TextEditingController();
-  TextEditingController timingController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController urlController = TextEditingController();
-
-  // データベースヘルパーインスタンス
-  final dbHelper = DatabaseHelper();
-
-  // 消費財情報をデータベースに登録
-  void registerItem() async {
-    InventoryItem newItem = InventoryItem(
-      id: null,
-      name: nameController.text,
-      store: storeController.text,
-      timing: int.parse(timingController.text),
-      price: double.parse(priceController.text),
-      url: urlController.text,
-    );
-    await dbHelper.insertInventoryItem(newItem);
-    // 登録成功メッセージを表示
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('登録しました。')));
-    // 入力フィールドをクリア
-    nameController.clear();
-    storeController.clear();
-    timingController.clear();
-    priceController.clear();
-    urlController.clear();
-  }
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _name = '';
+  String _store = '';
+  String _timing = '';
+  double _price = 0.0;
+  String _url = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('在庫登録'),
+        title: const Text('商品登録'),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: '商品名'),
-            ),
-            TextField(
-              controller: storeController,
-              decoration: InputDecoration(labelText: '購入先'),
-            ),
-            TextField(
-              controller: timingController,
-              decoration: InputDecoration(labelText: 'なくなるタイミング'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: priceController,
-              decoration: InputDecoration(labelText: '価格'),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-            ),
-            TextField(
-              controller: urlController,
-              decoration: InputDecoration(labelText: '通販用URL（オプション）'),
-              keyboardType: TextInputType.url,
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: registerItem,
-                child: Text('登録'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "商品名 *",
+                  hintText: "商品名を入力してください",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '商品名は必須です';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _name = value!,
               ),
-            ),
-          ],
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "購入場所",
+                  hintText: "購入場所を入力してください",
+                ),
+                onSaved: (value) => _store = value ?? '',
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "なくなるタイミング",
+                  hintText: "例: 1d, 2w, 3m",
+                ),
+                onSaved: (value) => _timing = value ?? '',
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "価格",
+                  hintText: "価格を入力してください",
+                  prefixText: "¥",
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                onSaved: (value) => _price = double.tryParse(value ?? '0.0') ?? 0.0,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "URL",
+                  hintText: "URLを入力してください",
+                ),
+                onSaved: (value) => _url = value ?? '',
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveForm,
+                child: const Text('登録'),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _saveForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      InventoryItem newItem = InventoryItem(
+        id: DateTime.now().millisecondsSinceEpoch,
+        name: _name,
+        store: _store,
+        timing: _timing,
+        price: _price.toInt(),
+        url: _url,
+      );
+      await DatabaseHelper.instance.insert(newItem);
+      Navigator.pop(context);
+    }
   }
 }
