@@ -58,19 +58,18 @@ class DatabaseHelper {
   }
 
   Future<List<InventoryItem>> fetchAll() async {
-  final db = await database;
-  final List<Map<String, dynamic>> maps = await db.query(_tableName);
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(_tableName);
 
-  return List.generate(maps.length, (i) {
-    return InventoryItem(
-      id: maps[i]['id'],
-      name: maps[i]['name'],
-      store: maps[i]['store'],
-      timing: maps[i]['timing'],
-      price: maps[i]['price'],
-      url: maps[i]['url'],
-    );
-  });
-}
-
+    return List.generate(maps.length, (i) {
+      return InventoryItem(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        store: maps[i]['store'],
+        timing: maps[i]['timing'],
+        price: maps[i]['price'],
+        url: maps[i]['url'],
+      );
+    });
+  }
 }

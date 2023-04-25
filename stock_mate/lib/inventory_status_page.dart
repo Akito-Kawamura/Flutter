@@ -75,7 +75,8 @@ class _InventoryStatusPageState extends State<InventoryStatusPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const InventoryRegistrationPage(),
+                          builder: (context) =>
+                              const InventoryRegistrationPage(),
                         ),
                       );
                     },

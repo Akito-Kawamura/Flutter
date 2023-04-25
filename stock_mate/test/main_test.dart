@@ -15,4 +15,3 @@ void main() {
     expect(find.widgetWithText(AppBar, '家の消費財在庫管理'), findsOneWidget);
   });
 }
-
