@@ -95,6 +95,8 @@ class _InventoryRegistrationPageState extends State<InventoryRegistrationPage> {
     return ElevatedButton(
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
+          int nextPurchaseDate = Utils.calculateNextPurchaseDate(int.parse(_timingController.text),
+          DateTime.now().millisecondsSinceEpoch ~/ 1000);
           // フォームが有効な場合
           final inventoryItem = InventoryItem(
             name: _nameController.text,
@@ -102,9 +104,8 @@ class _InventoryRegistrationPageState extends State<InventoryRegistrationPage> {
             timing: int.parse(_timingController.text),
             onlineStoreUrl: _onlineStoreUrlController.text,
             updateDate: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            nextPurchaseDate: nextPurchaseDate,
           );
-          inventoryItem.nextPurchaseDate = Utils.calculateNextPurchaseDate(
-              inventoryItem.timing, inventoryItem.updateDate);
 
           final dbHelper = DatabaseHelper.instance;
           await dbHelper.insertInventoryItem(inventoryItem);

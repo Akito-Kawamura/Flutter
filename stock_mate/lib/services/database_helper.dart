@@ -1,43 +1,68 @@
-import 'dart:io';
+import 'dart:async';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:stock_mate/models/inventory_item.dart'; // InventoryItemをインポート
 
 class DatabaseHelper {
-  static const _databaseName = 'stock_mate.db';
-  static const _databaseVersion = 1;
+  static final _databaseName = "inventory.db";
+  static final _databaseVersion = 1;
 
+  static final table = 'inventoryItems';
+
+  // シングルトンクラスにする
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
+  // データベースへの参照を保持する
   static Database? _database;
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, _databaseName);
+  // データベースを開き、テーブルを作成する
+  _initDatabase() async {
+    String path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(
       path,
       version: _databaseVersion,
-      onCreate: _onCreate,
+      onCreate: (db, version) {
+        return db.execute(
+          '''
+          CREATE TABLE $table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            purchasePlace TEXT,
+            timing INTEGER NOT NULL,
+            onlineStoreUrl TEXT,
+            updateDate INTEGER NOT NULL,
+            nextPurchaseDate INTEGER NOT NULL,
+            price REAL
+          )
+          ''',
+        );
+      },
     );
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE inventory_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        purchase_place TEXT,
-        timing INTEGER NOT NULL,
-        online_store_url TEXT,
-        update_date INTEGER NOT NULL,
-        next_purchase_date INTEGER NOT NULL
-      )
-    ''');
+  // 全てのインベントリアイテムを取得するメソッド
+  Future<List<InventoryItem>> queryAllInventoryItems() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(table);
+    return List.generate(maps.length, (i) {
+      return InventoryItem.fromMap(maps[i]);
+    });
+  }
+
+  // インベントリアイテムをデータベースに挿入するメソッド
+  Future<void> insertInventoryItem(InventoryItem inventoryItem) async {
+    final db = await database;
+    await db.insert(
+      table,
+      inventoryItem.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }
