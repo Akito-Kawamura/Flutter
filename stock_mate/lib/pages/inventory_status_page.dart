@@ -20,7 +20,7 @@ class _InventoryStatusPageState extends State<InventoryStatusPage> {
   Future<List<InventoryItem>> _fetchInventoryItems() async {
     final dbHelper = DatabaseHelper.instance;
     final items = await dbHelper.queryAllInventoryItems();
-    return items.map((item) => InventoryItem.fromMap(item)).toList();
+    return items;
   }
 
   @override
