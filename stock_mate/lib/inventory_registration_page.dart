@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:stock_mate/database_helper.dart';
 import 'package:stock_mate/inventory_item.dart';
 
-
 class InventoryRegistrationPage extends StatefulWidget {
   const InventoryRegistrationPage({Key? key}) : super(key: key);
 
   @override
-  _InventoryRegistrationPageState createState() => _InventoryRegistrationPageState();
+  _InventoryRegistrationPageState createState() =>
+      _InventoryRegistrationPageState();
 }
 
 class _InventoryRegistrationPageState extends State<InventoryRegistrationPage> {
@@ -68,7 +68,8 @@ class _InventoryRegistrationPageState extends State<InventoryRegistrationPage> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                 ],
-                onSaved: (value) => _price = double.tryParse(value ?? '0.0') ?? 0.0,
+                onSaved: (value) =>
+                    _price = double.tryParse(value ?? '0.0') ?? 0.0,
               ),
               TextFormField(
                 decoration: InputDecoration(
